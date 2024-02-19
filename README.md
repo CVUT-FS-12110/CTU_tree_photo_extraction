@@ -6,7 +6,9 @@ The rest of the README.md explains program structure and used variable parameter
 Program má stále strukturu z vývojové části pro kontrolu mezivýsledků.
 
 **SYSTEMATICKÝ POSTUP SPOUŠTĚNÍ SKRIPTŮ:**
+
     stručný popis skripů + správné pořadí spouštění - vstupy a výstupy viz schéma.png 
+    
     složka data_memory jednotlivé výstupy z jednotlivých částí programu - možná simulace každého zvlášť 
 
 *data_gathering*
