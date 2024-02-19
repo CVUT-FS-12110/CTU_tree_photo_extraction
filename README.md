@@ -6,36 +6,45 @@ The rest of the README.md explains program structure and used variable parameter
 Program má stále strukturu z vývojové části pro kontrolu mezivýsledků.
 
 SYSTEMATICKÝ POSTUP SPOUŠTĚNÍ SKRIPTŮ:
+
     stručný popis skripů + správné pořadí spouštění - vstupy a výstupy viz schéma.png 
     složka data_memory jednotlivé výstupy z jednotlivých částí programu - možná simulace každého zvlášť 
 
 -data_gathering
+
     sběr dat, formátování, ukládání do listů
 
 -data_merging
+
     časové sjednocení pose3d, gps a lidar dat - interpolace
 
 -main fusion
+
     fuze informaci o pozici robota - gps + pose3d
     detekce stromů na základě center shluků v lidarových měřeních
 
 -lidarmap_cleaner
+
     filtrování málo frekventovaných identifikátorů
     určení souřadnic stromů z lidarové mapy
 
 -amap_maker
+
     tvorba apriorni mapy ze znamych gps souradnic sloupů a známého počtu stromů v poli
 
 -camera_track
+
     tvorba mapy z kamerových dat
     detekce kmenů stromů na snímcích
     následné určení souřadnic stromů pomocí známé vzdálenosti stromové řady a vlastností kamery
 
 -cameramap_cleaner
+
     filtrování málo frekventovaných identifikátorů
     určení souřadnic stromů z kamerové mapy
 
 -map_fusion
+
     kombinace tří vstupních map na základě metody dva ze tří
     tvorba výsledné mapy
 
@@ -49,7 +58,9 @@ Cílem vývoje bylo využít dat ze senzorů zahradního robota pro tvorbu mapy 
 Pro implementaci na novych datech třeba zjistit strukturu logu a názvy kanálů: python3 -m osgar.logger NÁZEVLOGU.log
 
 SEZNAM NASTAVITELNÝCH PARAMETRŮ:
+
 main_fusion
+
 	max_range = 1700
 	min_range = 400
 	angle_range_low = 315
