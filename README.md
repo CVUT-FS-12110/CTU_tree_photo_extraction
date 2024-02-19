@@ -5,59 +5,59 @@ The rest of the README.md explains program structure and used variable parameter
 
 Program má stále strukturu z vývojové části pro kontrolu mezivýsledků.
 
-SYSTEMATICKÝ POSTUP SPOUŠTĚNÍ SKRIPTŮ:
-
+**SYSTEMATICKÝ POSTUP SPOUŠTĚNÍ SKRIPTŮ:**
     stručný popis skripů + správné pořadí spouštění - vstupy a výstupy viz schéma.png 
     složka data_memory jednotlivé výstupy z jednotlivých částí programu - možná simulace každého zvlášť 
 
--data_gathering
+*data_gathering*
 
     sběr dat, formátování, ukládání do listů
 
--data_merging
+*data_merging*
 
     časové sjednocení pose3d, gps a lidar dat - interpolace
 
--main fusion
+*main fusion*
 
     fuze informaci o pozici robota - gps + pose3d
     detekce stromů na základě center shluků v lidarových měřeních
 
--lidarmap_cleaner
+*lidarmap_cleaner*
 
     filtrování málo frekventovaných identifikátorů
     určení souřadnic stromů z lidarové mapy
 
--amap_maker
+*amap_maker*
 
     tvorba apriorni mapy ze znamych gps souradnic sloupů a známého počtu stromů v poli
 
--camera_track
+*camera_track*
 
     tvorba mapy z kamerových dat
     detekce kmenů stromů na snímcích
     následné určení souřadnic stromů pomocí známé vzdálenosti stromové řady a vlastností kamery
 
--cameramap_cleaner
+*cameramap_cleaner*
 
     filtrování málo frekventovaných identifikátorů
     určení souřadnic stromů z kamerové mapy
 
--map_fusion
+*map_fusion*
 
     kombinace tří vstupních map na základě metody dva ze tří
     tvorba výsledné mapy
 
--photo_extractor
+*photo_extractor*
+
     využití známých souřadníc stromů pro zisk oříznutých snímků
     tvorba výsledné struktury tree_list
     
-SHRNUTÍ A MOTIVACE ZA VÝVOJEM PROGRAMU
+**SHRNUTÍ A MOTIVACE ZA VÝVOJEM PROGRAMU**
 Cílem vývoje bylo využít dat ze senzorů zahradního robota pro tvorbu mapy sadu a extrakci fotografií jednotlivých stromů. Vstupem je soubor .log produkovaný systémem osgar. Aktuální verze programu využívá dat z října 2022. 
 
 Pro implementaci na novych datech třeba zjistit strukturu logu a názvy kanálů: python3 -m osgar.logger NÁZEVLOGU.log
 
-SEZNAM NASTAVITELNÝCH PARAMETRŮ:
+**SEZNAM NASTAVITELNÝCH PARAMETRŮ:**
 
 main_fusion
 
@@ -83,18 +83,22 @@ main_fusion
 		- váhy zdrojů informací o pozici pro fúzi
 		
 lidarmap_cleaner
+
 	minimal_occurence = 4
 		-pokud se strom nevyskytne minimálně 4x v listu je zanedbán
 		
 amap_maker
+
 	num_poles =3
 		-definice velikosti analyzovaného pole
 		
 camera_track
+
 	distortion limit = 200
 		-obdoba centerlowlim, centerhighlim - omezení se na střed snímku
 
 map_fusion
+
 	lidar_weight = 0.3
 	camera_weight = 0.3
 	amap_weight = 0.4
@@ -102,6 +106,7 @@ map_fusion
 	merge_limit = 200
 		-max vzdálenost pro zjištění odpovídajících stromů v jednotlivých listech
 photo_extractor
+
 	correction = 30
 		- ručně zvoleno pro dosažení odpovídajícíh výsledků na jednotlivých kamerách, které jsou v reálu vyoseny, ideálně = 0
 	default_crop
