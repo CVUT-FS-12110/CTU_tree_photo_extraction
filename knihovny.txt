@@ -1,0 +1,25 @@
+Seznam využitých knihoven:
+
+cv2
+geopy.distance.distance
+joblib
+json
+math
+matplotlib.backends.backend_tkagg.FigureCanvasTkAgg
+matplotlib.pyplot
+numpy
+numpy.unique
+numpy.where
+osgar.lib.serialize
+osgar.logger
+pandas
+PIL.Image
+PIL.ImageTk
+sklearn.cluster.estimate_bandwidth
+sklearn.cluster.MeanShift
+statistics.mean
+time
+tkinter
+torch
+ultralytics.YOLO
+
