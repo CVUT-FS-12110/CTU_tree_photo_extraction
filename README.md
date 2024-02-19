@@ -9,37 +9,37 @@ SYSTEMATICKÝ POSTUP SPOUŠTĚNÍ SKRIPTŮ:
     stručný popis skripů + správné pořadí spouštění - vstupy a výstupy viz schéma.png 
     složka data_memory jednotlivé výstupy z jednotlivých částí programu - možná simulace každého zvlášť 
 
-data_gathering
+-data_gathering
     sběr dat, formátování, ukládání do listů
 
-data_merging
+-data_merging
     časové sjednocení pose3d, gps a lidar dat - interpolace
 
-main fusion
+-main fusion
     fuze informaci o pozici robota - gps + pose3d
     detekce stromů na základě center shluků v lidarových měřeních
 
-lidarmap_cleaner
+-lidarmap_cleaner
     filtrování málo frekventovaných identifikátorů
     určení souřadnic stromů z lidarové mapy
 
-amap_maker
+-amap_maker
     tvorba apriorni mapy ze znamych gps souradnic sloupů a známého počtu stromů v poli
 
-camera_track
+-camera_track
     tvorba mapy z kamerových dat
     detekce kmenů stromů na snímcích
     následné určení souřadnic stromů pomocí známé vzdálenosti stromové řady a vlastností kamery
 
-cameramap_cleaner
+-cameramap_cleaner
     filtrování málo frekventovaných identifikátorů
     určení souřadnic stromů z kamerové mapy
 
-map_fusion
+-map_fusion
     kombinace tří vstupních map na základě metody dva ze tří
     tvorba výsledné mapy
 
-photo_extractor
+-photo_extractor
     využití známých souřadníc stromů pro zisk oříznutých snímků
     tvorba výsledné struktury tree_list
     
