@@ -1,6 +1,6 @@
 This program was developed as a part of thesis for a project implementing Agriculture 4.0 principles. 
 In this project, a garden robot equipped with various sensors drives arround a row of trees and scans it. Based on the scanning,
-the data is processed and plotten onto a map. The resulting map is then supplemented with cropped images of individual trees for further analysis and processing.
+the data is processed and plotted onto a map. The resulting map is then supplemented with cropped images of individual trees for further analysis and processing.
 The rest of the README.md explains program structure and used variable parameters in czech language primarily for usage by coworkers.
 
 Program má stále strukturu z vývojové části pro kontrolu mezivýsledků.
