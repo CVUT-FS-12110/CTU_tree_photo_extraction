@@ -24,7 +24,10 @@ rscolor_data = joblib.load('data_memory/rscolor_data_full_'+str(res1)+'_'+str(re
 arecontcam_data = joblib.load('data_memory/arecontcam_data_full_'+str(res1)+'_'+str(res2)+'.sav')
 fused_trajectory = joblib.load('data_memory/fused_trajectory_'+str(res1)+'_'+str(res2)+'.sav')
 
-torch.cuda.set_device(0)
+
+#  if torch.cuda is available, set cuda device
+if torch.cuda.is_available():
+    torch.cuda.set_device(0)
 
 dif_deg = 270 / 811
 max_range = 1700
