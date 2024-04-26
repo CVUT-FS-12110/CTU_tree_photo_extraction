@@ -67,8 +67,8 @@ print("pose2d", len(pose2d_data))
 print("lidar", len(lidar_data_full))
 
 #Ukládací část, pro následující používání programu nutné odkomentovat.
-#joblib.dump(gps_data, 'data_memory/gps_data_'+str(res1)+'_'+str(res2)+'.sav')
-#joblib.dump(pose2d_data, 'data_memory/pose2d_data_'+str(res1)+'_'+str(res2)+'.sav')
-#joblib.dump(lidar_data_full, 'data_memory/lidar_data_'+str(res1)+'_'+str(res2)+'.sav')
+joblib.dump(gps_data, 'data_memory/gps_data_'+str(res1)+'_'+str(res2)+'.sav')
+joblib.dump(pose2d_data, 'data_memory/pose2d_data_'+str(res1)+'_'+str(res2)+'.sav')
+joblib.dump(lidar_data_full, 'data_memory/lidar_data_'+str(res1)+'_'+str(res2)+'.sav')
 
 

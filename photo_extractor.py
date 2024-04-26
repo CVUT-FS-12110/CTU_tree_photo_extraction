@@ -12,18 +12,21 @@ res2 = 112.7
 
 gps_data = joblib.load('data_memory/gps_data_'+str(res1)+'_'+str(res2)+'.sav')
 fused_map = joblib.load('data_memory/fused_map_'+str(res1)+'_'+str(res2)+'.sav')
-fused_trajectory = joblib.load('data_memory/fused_trajectory_'+str(res1)+'_'+str(res2)+'.sav')
+fused_trajectory = joblib.load('data_memory/fused_trajectory_2022_'+str(res1)+'_'+str(res2)+'.sav')
 rscolor = joblib.load('data_memory/rscolor_data_full_'+str(res1)+'_'+str(res2)+'.sav')
 arecontcam = joblib.load('data_memory/arecontcam_data_full_'+str(res1)+'_'+str(res2)+'.sav')
 missing_trees = joblib.load('data_memory/missing_trees_'+str(res1)+"_"+str(res2)+'.sav')
 
-torch.cuda.set_device(0)
+#  if torch.cuda is available, set cuda device
+if torch.cuda.is_available():
+    torch.cuda.set_device(0)
+
 model = YOLO("data_memory/yolov8.pt")
 start_gps = [gps_data[0][1][0], gps_data[0][1][1]]
 
 #Konstanty a nastavení
 w_arecont, h_arecont = arecontcam[0][1].shape[:2]
-w_rscolor, h_rscolor, = rscolor[0][1].shape[:2]
+# w_rscolor, h_rscolor, = rscolor[0][1].shape[:2]
 halfcrop_arecont = 220
 halfcrop_rscolor = 125
 distortion_limit = 200
@@ -171,6 +174,6 @@ for s in range(len(fusedtime)):
     tree = [str(nazevstromu), gps_position, frame_arecont, frame_rscolor, fused_position[s], fusedtime[s]]
     tree_list.append(tree)
 
-#joblib.dump(tree_list, 'data_memory/tree_list_'+(str(res1)+'_'+str(res2)+'.sav'))
+joblib.dump(tree_list, 'data_memory/tree_list_'+(str(res1)+'_'+str(res2)+'.sav'))
 
 

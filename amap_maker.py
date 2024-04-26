@@ -82,5 +82,5 @@ plt.legend(loc='upper left',fontsize='large')
 plt.show()
 
 #Uložení
-#joblib.dump(stromy, 'data_memory/amap_trees_'+str(res1)+'_'+str(res2)+'.sav')
-#joblib.dump(sloupy_xy, 'data_memory/amap_poles_'+str(res1)+'_'+str(res2)+'.sav')
+joblib.dump(stromy, 'data_memory/amap_trees_'+str(res1)+'_'+str(res2)+'.sav')
+joblib.dump(sloupy_xy, 'data_memory/amap_poles_'+str(res1)+'_'+str(res2)+'.sav')

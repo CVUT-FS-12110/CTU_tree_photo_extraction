@@ -97,5 +97,5 @@ plt.scatter(finalx, finaly, s=10, c='k', marker='x', label='Výsledná mapa')
 plt.legend(loc='upper left')
 plt.show()
 
-#joblib.dump(final_list, "data_memory/cameramap_clean_"+str(res1)+"_"+str(res2)+".sav")
+joblib.dump(final_list, "data_memory/cameramap_clean_"+str(res1)+"_"+str(res2)+".sav")
 

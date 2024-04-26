@@ -22,7 +22,8 @@ lidar_data = joblib.load('data_memory/lidar_data_full_'+str(res1)+'_'+str(res2)+
 
 rscolor_data = joblib.load('data_memory/rscolor_data_full_'+str(res1)+'_'+str(res2)+'.sav')
 arecontcam_data = joblib.load('data_memory/arecontcam_data_full_'+str(res1)+'_'+str(res2)+'.sav')
-fused_trajectory = joblib.load('data_memory/fused_trajectory_'+str(res1)+'_'+str(res2)+'.sav')
+fused_trajectory = joblib.load('data_memory/fused_trajectory_2022_'+str(res1)+'_'+str(res2)+'.sav')
+
 
 
 #  if torch.cuda is available, set cuda device
@@ -31,9 +32,9 @@ if torch.cuda.is_available():
 
 dif_deg = 270 / 811
 max_range = 1700
-min_range = 400
-angle_range_low = 315
-angle_range_high = 540
+min_range = 700
+angle_range_low = 0
+angle_range_high = 135
 
 distortion_limit = 200
 centlowlim = -150
@@ -117,29 +118,55 @@ model = YOLO("data_memory/yolov8.pt")
 
 for a in range(len(arecontcam_data)):
     frame = arecontcam_data[a][1] #Nacteny snimek
-    frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE) #Rotace snimku
+    frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE) #Rotace snimku
 
     lid_ind = find_nearest(fused_trajectory_t, arecontcam_data[a][0].total_seconds())
     A = lidar_data[lid_ind][1]
     merged_lidar_short_xy = []
+    # for l in range(angle_range_low, angle_range_high, 1):
+    #     if min_range < A[l] < max_range:
+    #         if (-45 <= -45 + dif_deg * l) & (-45 + dif_deg * l < 0):
+    #             merged_lidar_short_xy.append([-A[l] * math.sin(math.radians(45 - dif_deg * l)),
+    #                                           -A[l] * math.cos(math.radians(45 - dif_deg * l))])
+    #         elif (0 < -45 + dif_deg * l) & (-45 + dif_deg * l < 90):
+    #             merged_lidar_short_xy.append([A[l] * math.sin(math.radians(-45 + dif_deg * l)),
+    #                                           -A[l] * math.cos(math.radians(-45 + dif_deg * l))])
+    #         elif (90 < -45 + dif_deg * l) & (-45 + dif_deg * l < 180):
+    #             merged_lidar_short_xy.append([A[l] * math.cos(math.radians(-135 + dif_deg * l)),
+    #                                           A[l] * math.sin(math.radians(-135 + dif_deg * l))])
+    #         elif (180 < -45 + dif_deg * l) & (-45 + dif_deg * l <= 225):
+    #             merged_lidar_short_xy.append([-A[l] * math.sin(math.radians(-225 + dif_deg * l)),
+    #                                           +A[l] * math.cos(math.radians(-225 + dif_deg * l))])
+    #         else:
+    #             print("Out of lidar FOV")
+    #     else:
+    #         continue
+
+
+        #PRO LIDAR NATOČENÝ VE SMĚRU JÍZDY ROBOTA
     for l in range(angle_range_low, angle_range_high, 1):
-        if min_range < A[l] < max_range:
+        if (min_range < A[l] < max_range):
             if (-45 <= -45 + dif_deg * l) & (-45 + dif_deg * l < 0):
-                merged_lidar_short_xy.append([-A[l] * math.sin(math.radians(45 - dif_deg * l)),
-                                              -A[l] * math.cos(math.radians(45 - dif_deg * l))])
+                merged_lidar_short_xy.append([+A[l] * math.cos(math.radians(45 - dif_deg * l)),
+                                              -A[l] * math.sin(math.radians(45 - dif_deg * l))])
+
             elif (0 < -45 + dif_deg * l) & (-45 + dif_deg * l < 90):
-                merged_lidar_short_xy.append([A[l] * math.sin(math.radians(-45 + dif_deg * l)),
-                                              -A[l] * math.cos(math.radians(-45 + dif_deg * l))])
+                merged_lidar_short_xy.append([+A[l] * math.cos(math.radians(-45 + dif_deg * l)),
+                                              +A[l] * math.sin(math.radians(-45 + dif_deg * l))])
+
             elif (90 < -45 + dif_deg * l) & (-45 + dif_deg * l < 180):
-                merged_lidar_short_xy.append([A[l] * math.cos(math.radians(-135 + dif_deg * l)),
-                                              A[l] * math.sin(math.radians(-135 + dif_deg * l))])
+                merged_lidar_short_xy.append([-A[l] * math.sin(math.radians(-135 + dif_deg * l)),
+                                              +A[l] * math.cos(math.radians(-135 + dif_deg * l))])
+
             elif (180 < -45 + dif_deg * l) & (-45 + dif_deg * l <= 225):
-                merged_lidar_short_xy.append([-A[l] * math.sin(math.radians(-225 + dif_deg * l)),
-                                              +A[l] * math.cos(math.radians(-225 + dif_deg * l))])
+                merged_lidar_short_xy.append([-A[l] * math.cos(math.radians(-225 + dif_deg * l)),
+                                              -A[l] * math.sin(math.radians(-225 + dif_deg * l))])
+
             else:
                 print("Out of lidar FOV")
         else:
             continue
+
     X = np.array(merged_lidar_short_xy)  # Definice datasetu
     bandwidth = estimate_bandwidth(X, quantile=0.25)
     model2 = MeanShift(bandwidth=bandwidth)
@@ -182,12 +209,24 @@ for a in range(len(arecontcam_data)):
                 tree_coord = [p + sensor_placement[0] + position_arecontcam[a][0],
                               generate_y(xbox, picture_distance) + sensor_placement[1] + position_arecontcam[a][1]]
                 noid_trees.append([tree_coord[0], tree_coord[1]])
-                id = all_trees[-1][1]
-                prev_a = all_trees[-1][4]
+                
+                if len(all_trees) == 0:
+                    id = 0
+                    prev_a = a
+                    prev_center = [0, 0]
+                    pred_center = [0, 0]
+
+                else:
+                    id = all_trees[-1][1]
+                    prev_a = all_trees[-1][4]
+                    prev_center = all_trees[-1][2]
+                    pred_center = [prev_center[0], prev_center[1]]
+
+
+                
                 ref_dist = [position_arecontcam[a][0] - position_arecontcam[prev_a][0],
                             position_arecontcam[a][1] - position_arecontcam[prev_a][1]]
-                prev_center = all_trees[-1][2]
-                pred_center = [prev_center[0], prev_center[1]]
+                
                 #Vzdálenost predikované pozice centra a detekované pozice centra
                 diff = math.dist(tree_coord, pred_center)
 
@@ -252,6 +291,6 @@ plt.legend(loc='upper left')
 plt.show()
 
 #ukladani center co nemaji id z yolov8 sledovani pro vizualizaci
-#joblib.dump(all_trees,"data_memory/cameramap_raw_"+str(res1)+'_'+str(res2)+'.sav')
-#joblib.dump(noid_trees,"data_memory/cameramap_raw_noid_"+str(res1)+"_"+str(res2)+".sav")
+joblib.dump(all_trees,"data_memory/cameramap_raw_"+str(res1)+'_'+str(res2)+'.sav')
+joblib.dump(noid_trees,"data_memory/cameramap_raw_noid_"+str(res1)+"_"+str(res2)+".sav")
 

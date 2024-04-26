@@ -12,7 +12,7 @@ amap_poles = joblib.load("data_memory/amap_poles_"+str(res1)+'_'+str(res2)+'.sav
 amap_trees = joblib.load("data_memory/amap_trees_"+str(res1)+'_'+str(res2)+'.sav')
 center_lidar = joblib.load("data_memory/lidarmap_clean_"+str(res1)+"_"+str(res2)+".sav")
 center_arecont = joblib.load("data_memory/cameramap_clean_"+str(res1)+"_"+str(res2)+".sav")
-fused_trajectory = joblib.load('data_memory/fused_trajectory_'+str(res1)+'_'+str(res2)+'.sav')
+fused_trajectory = joblib.load('data_memory/fused_trajectory_2022_'+str(res1)+'_'+str(res2)+'.sav')
 
 amap = amap_trees
 lidar_weight = 0.3
@@ -234,6 +234,6 @@ else:
             print("varování v čase", nonidentified_lidar_t[hi])
 print(missing_trees)
 plt.show()
-#joblib.dump(fused_map,"data_memory/fused_map_"+str(res1)+"_"+str(res2)+".sav")
-#joblib.dump(missing_trees, "data_memory/missing_trees_"+str(res1)+"_"+str(res2)+".sav")
+joblib.dump(fused_map,"data_memory/fused_map_"+str(res1)+"_"+str(res2)+".sav")
+joblib.dump(missing_trees, "data_memory/missing_trees_"+str(res1)+"_"+str(res2)+".sav")
 

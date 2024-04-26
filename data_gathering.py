@@ -4,25 +4,27 @@ from osgar.lib.serialize import deserialize
 from osgar.logger import LogReader, lookup_stream_id
 import pandas as pd
 import math
+import joblib
 
 #Načtení cesty k logu
-log_file = '/media/pavel/7438-8CC9/DIPLOMKA/fulldata.log'
+log_file = 'data_memory\ipc-dynamic-meas-240419_210554.log'
 
 print(log_file)
 
 #Definice názvů jednotlivých kanálů pro čtení.
 #POZOR - data z roku 2022 a 2023 mají jiné názvy, zkontrolovat pomocí python3 -m osgar.logger logfile.log
-sname_gps_position = "gps.position"
-sname_realsense_color = "realsense.color"
-sname_realsense_depth = "realsense.depth"
-sname_lidar_scan = "lidar.scan"
+sname_gps_position = "from_spider.position"
+# sname_realsense_color = "realsense.color"
+# sname_realsense_depth = "realsense.depth"
+sname_lidar_scan = "from_spider.lidar_scan"
 sname_from_spider_pose3d = "from_spider.pose3d"
 sname_from_spider_pose2d = "from_spider.pose2d"
 sname_arecontcam = "arecont.image"
+# sname_arecontcam = "route_cam.image"
 
 ostream_gps_position = lookup_stream_id(log_file, sname_gps_position)
-ostream_realsense_color = lookup_stream_id(log_file, sname_realsense_color)
-ostream_realsense_depth = lookup_stream_id(log_file, sname_realsense_depth)
+# ostream_realsense_color = lookup_stream_id(log_file, sname_realsense_color)
+# ostream_realsense_depth = lookup_stream_id(log_file, sname_realsense_depth)
 ostream_lidar_scan = lookup_stream_id(log_file, sname_lidar_scan)
 ostream_from_spider_pose3d = lookup_stream_id(log_file, sname_from_spider_pose3d)
 ostream_from_spider_pose2d = lookup_stream_id(log_file, sname_from_spider_pose2d)
@@ -70,7 +72,6 @@ uppertime = pd.Timedelta(seconds=res2)
 arg=[ostream_from_spider_pose2d,
      ostream_gps_position,
      ostream_lidar_scan,
-     ostream_realsense_color,
      ostream_arecontcam]
 
 #Čtení jednotlivých dat na základě stream_id:
@@ -82,14 +83,14 @@ with LogReader(log_file, only_stream_id=arg) as log:
         elif pd.Timedelta(timestamp) > uppertime:
             break
 
-        if stream_id == ostream_realsense_color:
-            buf_color = deserialize(data)
-            color_im = cv2.imdecode(np.frombuffer(buf_color, dtype=np.uint8), 1)
-            rscolor_data_full.append([timestamp, color_im])
+        # if stream_id == ostream_realsense_color:
+        #     buf_color = deserialize(data)
+        #     color_im = cv2.imdecode(np.frombuffer(buf_color, dtype=np.uint8), 1)
+        #     rscolor_data_full.append([timestamp, color_im])
 
-        if stream_id == ostream_realsense_depth:
-            buf_depth = deserialize(data)
-            color_im = cv2.imdecode(np.frombuffer(buf_depth, dtype=np.uint8), 1)
+        # if stream_id == ostream_realsense_depth:
+        #     buf_depth = deserialize(data)
+        #     color_im = cv2.imdecode(np.frombuffer(buf_depth, dtype=np.uint8), 1)
 
         if stream_id == ostream_gps_position:
             gps_position_ms = deserialize(data)
@@ -131,10 +132,10 @@ with LogReader(log_file, only_stream_id=arg) as log:
 #print("arecontcam data", len(arecontcam_data_full))
 
 #Meziukládání do složky v projektu pro další využití. (soubor, path)
-#joblib.dump(gps_data_full,'../data_memory/gps_data_full_'+str(res1)+'_'+str(res2)+'.sav')
-#joblib.dump(pose2d_data_full,'../data_memory/pose2d_data_full_'+str(res1)+'_'+str(res2)+'.sav')
-#joblib.dump(pose3d_data_full,'../data_memory/pose3d_data_full_'+str(res1)+'_'+str(res2)+'.sav')
-#joblib.dump(lidar_data_full,'../data_memory/lidar_data_full_'+str(res1)+'_'+str(res2)+'.sav')
-#joblib.dump(rscolor_data_full,'../data_memory/rscolor_data_full_'+str(res1)+'_'+str(res2)+'.sav')
-#joblib.dump(rsdepth_data_full,'../data_memory/rsdepth_data_full_'+str(res1)+'_'+str(res2)+'.sav')
-#joblib.dump(arecontcam_data_full,'../data_memory/arecontcam_data_full_'+str(res1)+'_'+str(res2)+'.sav')
+joblib.dump(gps_data_full,'data_memory/gps_data_full_'+str(res1)+'_'+str(res2)+'.sav')
+joblib.dump(pose2d_data_full,'data_memory/pose2d_data_full_'+str(res1)+'_'+str(res2)+'.sav')
+joblib.dump(pose3d_data_full,'data_memory/pose3d_data_full_'+str(res1)+'_'+str(res2)+'.sav')
+joblib.dump(lidar_data_full,'data_memory/lidar_data_full_'+str(res1)+'_'+str(res2)+'.sav')
+joblib.dump(rscolor_data_full,'data_memory/rscolor_data_full_'+str(res1)+'_'+str(res2)+'.sav')
+joblib.dump(rsdepth_data_full,'data_memory/rsdepth_data_full_'+str(res1)+'_'+str(res2)+'.sav')
+joblib.dump(arecontcam_data_full,'data_memory/arecontcam_data_full_'+str(res1)+'_'+str(res2)+'.sav')

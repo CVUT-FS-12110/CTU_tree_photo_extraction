@@ -84,5 +84,5 @@ plt.xlabel("x [mm]")
 plt.ylabel("y [mm]")
 plt.show()
 
-#joblib.dump(total,"data_memory/lidarmap_clean_"+str(res1)+"_"+str(res2)+".sav")
+joblib.dump(total,"data_memory/lidarmap_clean_"+str(res1)+"_"+str(res2)+".sav")
 
