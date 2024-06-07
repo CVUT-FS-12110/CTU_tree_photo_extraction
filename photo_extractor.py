@@ -178,6 +178,13 @@ print(len(tree_list))
 
 joblib.dump(tree_list, 'data_memory/tree_list_'+(str(res1)+'_'+str(res2)+'.sav'))
 
+import os
+dir_path = 'data_memory/photos/arecont/'
+
+# Check if the directory exists, create it if it doesn't
+if not os.path.exists(dir_path):
+    os.makedirs(dir_path)
+    
 # I want to save the tree list frames as an images
 for i in range(len(tree_list)):
     cv2.imwrite('data_memory/photos/arecont/' + tree_list[i][0] + '.jpg', tree_list[i][2])
