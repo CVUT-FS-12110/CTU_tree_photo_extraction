@@ -5,14 +5,14 @@ from geopy.distance import distance
 import cv2
 from ultralytics import YOLO
 import torch
+import config
 
-res1 = 31
-res2 = 112.7
-#res2 = 546
+res1 = config.res1
+res2 = config.res2
 
 gps_data = joblib.load('data_memory/gps_data_'+str(res1)+'_'+str(res2)+'.sav')
 fused_map = joblib.load('data_memory/fused_map_'+str(res1)+'_'+str(res2)+'.sav')
-fused_trajectory = joblib.load('data_memory/fused_trajectory_2022_'+str(res1)+'_'+str(res2)+'.sav')
+fused_trajectory = joblib.load('data_memory/fused_trajectory_'+str(res1)+'_'+str(res2)+'.sav')
 rscolor = joblib.load('data_memory/rscolor_data_full_'+str(res1)+'_'+str(res2)+'.sav')
 arecontcam = joblib.load('data_memory/arecontcam_data_full_'+str(res1)+'_'+str(res2)+'.sav')
 missing_trees = joblib.load('data_memory/missing_trees_'+str(res1)+"_"+str(res2)+'.sav')
@@ -26,7 +26,7 @@ start_gps = [gps_data[0][1][0], gps_data[0][1][1]]
 
 #Konstanty a nastavení
 w_arecont, h_arecont = arecontcam[0][1].shape[:2]
-# w_rscolor, h_rscolor, = rscolor[0][1].shape[:2]
+w_rscolor, h_rscolor, = rscolor[0][1].shape[:2]
 halfcrop_arecont = 220
 halfcrop_rscolor = 125
 distortion_limit = 200
@@ -159,8 +159,8 @@ for s in range(len(fusedtime)):
         c = 20
 
     nazevstromu = "4L_"+str(pole)+"_"+str(c)
-    #cv2.imwrite("data_memory/photos/arecont/strom_"+nazevstromu+"_"+str(areconttimer[arecont_ind])+'.jpg',frame_arecont)
-    #cv2.imwrite("data_memory/photos/rscolor/strom_"+nazevstromu+"_"+str(rscolortimer[rscolor_ind])+'.jpg',frame_rscolor)
+    cv2.imwrite("data_memory/photos/arecont/strom_"+nazevstromu+"_"+str(areconttimer[arecont_ind])+'.jpg',frame_arecont)
+    cv2.imwrite("data_memory/photos/rscolor/strom_"+nazevstromu+"_"+str(rscolortimer[rscolor_ind])+'.jpg',frame_rscolor)
     cislostromu += 1
 
     #Převod x,y na GPS
@@ -170,7 +170,7 @@ for s in range(len(fusedtime)):
                  destination((gpsmove_x.latitude, gpsmove_x.longitude),bearing=0))
 
     gps_position = [gpsmove_y.longitude, gpsmove_y.latitude]
-    # [nazev stromu, gps, arecont snimek, realsense snimek, xy pozice, cas mereni]
+   # [nazev stromu, gps, arecont snimek, realsense snimek, xy pozice, cas mereni]
     tree = [str(nazevstromu), gps_position, frame_arecont, frame_rscolor, fused_position[s], fusedtime[s]]
     tree_list.append(tree)
 

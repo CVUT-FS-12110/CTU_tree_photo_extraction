@@ -1,9 +1,10 @@
 import joblib
 import numpy as np
+import config
 
-res1 = 31
-res2 = 112.7
-#res2 = 546
+res1 = config.res1
+res2 = config.res2
+
 gps_data_full = joblib.load('data_memory/gps_data_full_'+str(res1)+'_'+str(res2)+'.sav')
 pose2d_data_full = joblib.load('data_memory/pose2d_data_full_'+str(res1)+'_'+str(res2)+'.sav')
 lidar_data_full = joblib.load('data_memory/lidar_data_full_'+str(res1)+'_'+str(res2)+'.sav')

@@ -1,9 +1,10 @@
 import joblib
 from matplotlib import pyplot as plt
+import config
 
-res1 = 31
-res2 = 112.7
-#res2 = 546
+res1 = config.res1
+res2 = config.res2
+
 
 centerlist_lidar = joblib.load("data_memory/lidarmap_raw_"+str(res1)+'_'+str(res2)+'.sav')
 lidar_data = joblib.load('data_memory/lidar_data_full_'+str(res1)+'_'+str(res2)+'.sav')

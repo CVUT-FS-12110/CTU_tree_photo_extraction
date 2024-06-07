@@ -2,17 +2,18 @@ import joblib
 import numpy as np
 import math
 from matplotlib import pyplot as plt
+import config
 
-res1 = 31
-res2 = 112.7
-#res2 = 546
+res1 = config.res1
+res2 = config.res2
+
 
 
 amap_poles = joblib.load("data_memory/amap_poles_"+str(res1)+'_'+str(res2)+'.sav')
 amap_trees = joblib.load("data_memory/amap_trees_"+str(res1)+'_'+str(res2)+'.sav')
 center_lidar = joblib.load("data_memory/lidarmap_clean_"+str(res1)+"_"+str(res2)+".sav")
 center_arecont = joblib.load("data_memory/cameramap_clean_"+str(res1)+"_"+str(res2)+".sav")
-fused_trajectory = joblib.load('data_memory/fused_trajectory_2022_'+str(res1)+'_'+str(res2)+'.sav')
+fused_trajectory = joblib.load('data_memory/fused_trajectory_'+str(res1)+'_'+str(res2)+'.sav')
 
 amap = amap_trees
 lidar_weight = 0.3

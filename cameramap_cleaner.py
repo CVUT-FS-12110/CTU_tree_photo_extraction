@@ -2,10 +2,11 @@ import joblib
 import numpy as np
 import math
 from matplotlib import pyplot as plt
+import config
 
-res1 = 31
-res2 = 112.7
-#res2 = 546
+res1 = config.res1
+res2 = config.res2
+
 
 all_trees = joblib.load("data_memory/cameramap_raw_"+str(res1)+'_'+str(res2)+'.sav')
 centerlist_arecont_noid = joblib.load('data_memory/cameramap_raw_noid_'+str(res1)+'_'+str(res2)+'.sav')

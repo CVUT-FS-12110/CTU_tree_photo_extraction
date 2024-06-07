@@ -11,9 +11,11 @@ from statistics import mean
 from matplotlib import pyplot as plt
 import time
 
-res1 = 31
-res2 = 112.7
-#res2 = 546
+import config
+
+res1 = config.res1
+res2 = config.res2
+
 starttime = time.time()
 
 gps_data = joblib.load('data_memory/gps_data_'+str(res1)+'_'+str(res2)+'.sav')
@@ -22,7 +24,7 @@ lidar_data = joblib.load('data_memory/lidar_data_full_'+str(res1)+'_'+str(res2)+
 
 rscolor_data = joblib.load('data_memory/rscolor_data_full_'+str(res1)+'_'+str(res2)+'.sav')
 arecontcam_data = joblib.load('data_memory/arecontcam_data_full_'+str(res1)+'_'+str(res2)+'.sav')
-fused_trajectory = joblib.load('data_memory/fused_trajectory_2022_'+str(res1)+'_'+str(res2)+'.sav')
+fused_trajectory = joblib.load('data_memory/fused_trajectory_'+str(res1)+'_'+str(res2)+'.sav') # zmene nazev souboru z "fused_trajectory_2022_" na "fused_trajectory_"
 
 
 
@@ -257,10 +259,12 @@ for a in range(len(arecontcam_data)):
     #frame=frame[675:1024,0:768]
     """
 
+    print("BrakePoint-10...", m, "...")
+   
     #Vizualizace detekce
     cv2.imshow("Camera_track", annotated_frame)
     cv2.waitKey(1)
-
+print("BrakePoint-20...")
 #Výsledná vizualizace
 allx = []
 ally = []
@@ -275,22 +279,26 @@ for oo in range(len(all_trees)):
     boxid = all_trees[oo][1]
     treex = all_trees[oo][2][0]
     treey = all_trees[oo][2][1]
-
+    print("BrakePoint-30...")
 endtime = time.time()
 print("ubehly cas", endtime - starttime)
 
 #Vizualizace
 noidx, noidy = zip(*noid_trees)
-plt.figure(figsize=(6, 6))
-plt.title("Detekované kmeny")
-plt.xlabel("x [mm]")
-plt.ylabel("y [mm]")
-plt.scatter(allx, ally, s=10, c='y', marker='o', label='yolo identifikace')
-plt.scatter(noidx, noidy, s=10, c='r',marker='o', label='lidar identifikace')
-plt.legend(loc='upper left')
-plt.show()
-
+print("BrakePoint-40...")
+#plt.figure(figsize=(6, 6)) # Zakomentovany cely plot, protoye chce nastavoit zpet wayland. Zatimco zobrayeni stromu chce XCB
+print("BrakePoint-50...")
+#plt.title("Detekované kmeny")
+#plt.xlabel("x [mm]")
+#plt.ylabel("y [mm]")
+#plt.scatter(allx, ally, s=10, c='y', marker='o', label='yolo identifikace')
+#plt.scatter(noidx, noidy, s=10, c='r',marker='o', label='lidar identifikace')
+#plt.legend(loc='upper left')
+print("BrakePoint-60...")
+#plt.show()
+print("BrakePoint-70...")
 #ukladani center co nemaji id z yolov8 sledovani pro vizualizaci
 joblib.dump(all_trees,"data_memory/cameramap_raw_"+str(res1)+'_'+str(res2)+'.sav')
+print("BrakePoint-80...")
 joblib.dump(noid_trees,"data_memory/cameramap_raw_noid_"+str(res1)+"_"+str(res2)+".sav")
-
+print("BrakePoint-90...")

@@ -7,13 +7,13 @@ from sklearn.cluster import MeanShift, estimate_bandwidth
 from matplotlib import pyplot as plt
 import time
 from geopy.distance import distance
+import config
 
 #Měření času běhu programu
 starttime = time.time()
 
-res1 = 31
-res2 = 112.7
-#res2 = 546
+res1 = config.res1
+res2 = config.res2
 
 gps_data = joblib.load('data_memory/gps_data_'+str(res1)+'_'+str(res2)+'.sav')
 pose3d_data = joblib.load('data_memory/pose2d_data_'+str(res1)+'_'+str(res2)+'.sav')

@@ -1,15 +1,19 @@
 import joblib
 import math
 from matplotlib import pyplot as plt
-from geopy.distance import distance
+from geopy.distance import distance #jestli to chápu dobře, tak tady se pro výpočet vzdálenosti dvou bodů vzdálených od sebe 10 m počítá se zakřivením země ;) Tečka.m na konci určuje jednotku (metry) v které to vrací
+import config
 
-res1 = 31
-res2 = 112.7
-#res2 = 546
+# v názvech proměnných: A .. apriorní, S ... ze sentorů
 
-gps_data = joblib.load('data_memory/gps_data_'+str(res1)+'_'+str(res2)+'.sav')
+res1 = config.res1
+res2 = config.res2
+start_pole = config.start_pole
 
-sloupy_gps=[[15.569373884238743, 50.37002728347285],
+gps_Sdata = joblib.load('data_memory/gps_data_'+str(res1)+'_'+str(res2)+'.sav')
+print(len(gps_Sdata))
+
+sloupy_Agps=[[15.569373884238743, 50.37002728347285],
             [15.569406805671642, 50.37011603134719],
             [15.569438702474857, 50.370204689156736],
             [15.569470587705158, 50.370292157394715],
@@ -24,8 +28,8 @@ sloupy_gps=[[15.569373884238743, 50.37002728347285],
             [15.56975212092143, 50.37108018176467],
             [15.569780411306475, 50.37116000418904]]
 
-start_gps = [gps_data[0][1][0], gps_data[0][1][1]]
-num_poles = 3
+start_Sgps = [gps_Sdata[start_pole][1][0], gps_Sdata[start_pole][1][1]] #gps_Sdata[0...poradove cislo recordu][1...GPS, 0 ... time][0,1 ....sirka,delka]
+num_poles = config.num_poles # počet sloupů ve zpracovávaném úseku (polí je o jedno méně)
 
 #Funkce pro prevod gps na xy
 def gps2xy(sloupgps, startgps):
@@ -34,6 +38,7 @@ def gps2xy(sloupgps, startgps):
     coords = [distance([starty, startx], [starty, sloupx]).m * 1000,
               distance([starty, startx], [sloupy, startx]).m * 1000]
 
+    print('sloupgps = ',sloupgps, 'startgps = ',startgps)
     return coords
 
 #Generování stromů
@@ -51,14 +56,18 @@ def generate_trees(point_1, point_2, num_trees):
         x_tree = x2 - (i+0.5) * spacing * unit_vector[0]
         y_tree = y2 - (i+0.5) * spacing * unit_vector[1]
         tree_coordinates.append([x_tree, y_tree])
+        print('spacing = ',spacing, 'pole_dist = ',pole_dist,'num_trees = ',num_trees)
     return tree_coordinates
 
 
 stromy=[]
 sloupy_xy=[]
+start_pole = config.start_pole
 #Převod GPS na xy a generování stromů
-for h in range(num_poles):
-    sloup_conv = gps2xy(sloupy_gps[h], start_gps)
+for h in range(0, num_poles):
+    print('index h = ',h)
+    
+    sloup_conv = gps2xy(sloupy_Agps[h+start_pole], start_Sgps) # (apriorni GPS sloupu, )
     sloupy_xy.append(sloup_conv)
     if h == 13:
         strom = generate_trees(sloupy_xy[h-1],sloupy_xy[h],18)
@@ -66,7 +75,12 @@ for h in range(num_poles):
     elif h>0:
         strom = generate_trees(sloupy_xy[h-1],sloupy_xy[h],20)
         stromy = stromy + strom
+        print('strom:', strom)
 
+print(len(gps_Sdata))
+print(gps_Sdata[1])
+print(len(gps_Sdata[1]))
+print(start_Sgps)
 
 #Vizualizace
 polesx, polesy = zip(*sloupy_xy)
@@ -84,3 +98,7 @@ plt.show()
 #Uložení
 joblib.dump(stromy, 'data_memory/amap_trees_'+str(res1)+'_'+str(res2)+'.sav')
 joblib.dump(sloupy_xy, 'data_memory/amap_poles_'+str(res1)+'_'+str(res2)+'.sav')
+
+print("sloupy_xy", sloupy_xy)
+print("start_pole", start_pole)
+print("start_Sgps", start_Sgps)

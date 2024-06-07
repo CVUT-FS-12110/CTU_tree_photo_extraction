@@ -5,15 +5,19 @@ from osgar.logger import LogReader, lookup_stream_id
 import pandas as pd
 import math
 import joblib
+import config
 
-#Načtení cesty k logu
-log_file = 'data_memory\ipc-dynamic-meas-240419_210554.log'
+
+#Načtení cesty k logu CONFIG
+#log_file = 'data/ipc-dynamic-meas-240419_210554.log'
+log_file = config.log_file
 
 print(log_file)
 
 #Definice názvů jednotlivých kanálů pro čtení.
 #POZOR - data z roku 2022 a 2023 mají jiné názvy, zkontrolovat pomocí python3 -m osgar.logger logfile.log
 sname_gps_position = "from_spider.position"
+sname_realsense_color = "route_cam.image" #místo realsens to je routka
 # sname_realsense_color = "realsense.color"
 # sname_realsense_depth = "realsense.depth"
 sname_lidar_scan = "from_spider.lidar_scan"
@@ -23,7 +27,7 @@ sname_arecontcam = "arecont.image"
 # sname_arecontcam = "route_cam.image"
 
 ostream_gps_position = lookup_stream_id(log_file, sname_gps_position)
-# ostream_realsense_color = lookup_stream_id(log_file, sname_realsense_color)
+ostream_realsense_color = lookup_stream_id(log_file, sname_realsense_color)
 # ostream_realsense_depth = lookup_stream_id(log_file, sname_realsense_depth)
 ostream_lidar_scan = lookup_stream_id(log_file, sname_lidar_scan)
 ostream_from_spider_pose3d = lookup_stream_id(log_file, sname_from_spider_pose3d)
@@ -61,10 +65,10 @@ def euler_from_quaternion(x, y, z, w):
 
     return roll_x, pitch_y, yaw_z  # in radians
 
-#Zvolené časové rozmezi z logu
-res1 = 31
-res2 = 112.7
-#res2 = 546
+#Zvolené časové rozmezi z logu ... CONFIG
+res1 = config.res1
+res2 = config.res2
+
 lowertime = pd.Timedelta(seconds=res1)
 uppertime = pd.Timedelta(seconds=res2)
 
@@ -72,7 +76,9 @@ uppertime = pd.Timedelta(seconds=res2)
 arg=[ostream_from_spider_pose2d,
      ostream_gps_position,
      ostream_lidar_scan,
-     ostream_arecontcam]
+     ostream_arecontcam,
+     ostream_realsense_color
+     ]
 
 #Čtení jednotlivých dat na základě stream_id:
 with LogReader(log_file, only_stream_id=arg) as log:
@@ -83,10 +89,10 @@ with LogReader(log_file, only_stream_id=arg) as log:
         elif pd.Timedelta(timestamp) > uppertime:
             break
 
-        # if stream_id == ostream_realsense_color:
-        #     buf_color = deserialize(data)
-        #     color_im = cv2.imdecode(np.frombuffer(buf_color, dtype=np.uint8), 1)
-        #     rscolor_data_full.append([timestamp, color_im])
+        if stream_id == ostream_realsense_color:
+            buf_color = deserialize(data)
+            color_im = cv2.imdecode(np.frombuffer(buf_color, dtype=np.uint8), 1)
+            rscolor_data_full.append([timestamp, color_im])
 
         # if stream_id == ostream_realsense_depth:
         #     buf_depth = deserialize(data)
@@ -130,6 +136,8 @@ with LogReader(log_file, only_stream_id=arg) as log:
 #print("lidar data", len(lidar_data_full))
 #print("rscolor data", len(rscolor_data_full))
 #print("arecontcam data", len(arecontcam_data_full))
+
+print(res1, res2)
 
 #Meziukládání do složky v projektu pro další využití. (soubor, path)
 joblib.dump(gps_data_full,'data_memory/gps_data_full_'+str(res1)+'_'+str(res2)+'.sav')
