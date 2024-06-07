@@ -13,7 +13,7 @@ res2 = 112.7
 gps_data = joblib.load('data_memory/gps_data_'+str(res1)+'_'+str(res2)+'.sav')
 fused_map = joblib.load('data_memory/fused_map_'+str(res1)+'_'+str(res2)+'.sav')
 fused_trajectory = joblib.load('data_memory/fused_trajectory_2022_'+str(res1)+'_'+str(res2)+'.sav')
-rscolor = joblib.load('data_memory/rscolor_data_full_'+str(res1)+'_'+str(res2)+'.sav')
+# rscolor = joblib.load('data_memory/rscolor_data_full_'+str(res1)+'_'+str(res2)+'.sav')
 arecontcam = joblib.load('data_memory/arecontcam_data_full_'+str(res1)+'_'+str(res2)+'.sav')
 missing_trees = joblib.load('data_memory/missing_trees_'+str(res1)+"_"+str(res2)+'.sav')
 
@@ -32,7 +32,7 @@ halfcrop_rscolor = 125
 distortion_limit = 200
 correction = 30 #v realite je rs kamera namontovana trochu nakrivo a neni v ose s arecontkou
 default_crop_arecont = [[0, h_arecont], [230, 230+2*halfcrop_arecont]]
-default_crop_rscolor = [[0, h_rscolor], [135, 135+2*halfcrop_rscolor]]
+# default_crop_rscolor = [[0, h_rscolor], [135, 135+2*halfcrop_rscolor]]
 
 fusedx = []
 fusedy = []
@@ -74,17 +74,17 @@ def biggest_gaps(seznam, pocet):
 
 
 missing_indexes = biggest_gaps(fusedtime, missing_trees)
-rscolortimer = []
-for uu in range(len(rscolor)):
-    rscolortimer.append(rscolor[uu][0].total_seconds())
+# rscolortimer = []
+# for uu in range(len(rscolor)):
+#     rscolortimer.append(rscolor[uu][0].total_seconds())
 
 areconttimer = []
 for ii in range(len(arecontcam)):
     areconttimer.append(arecontcam[ii][0].total_seconds())
 
-def a2rs(xbox, w_rscolor, w_arecont):
-    x_conv = xbox*w_rscolor/w_arecont
-    return x_conv
+# def a2rs(xbox, w_rscolor, w_arecont):
+#     x_conv = xbox*w_rscolor/w_arecont
+#     return x_conv
 
 
 def find_nearest(array, value):
@@ -101,12 +101,12 @@ def find_nearest(array, value):
 cislostromu = 1
 for s in range(len(fusedtime)):
     arecont_ind = find_nearest(areconttimer, fusedtime[s])
-    rscolor_ind = find_nearest(rscolortimer, fusedtime[s])
+    # rscolor_ind = find_nearest(rscolortimer, fusedtime[s])
 
     frame_arecont = arecontcam[arecont_ind][1]
-    frame_rscolor = rscolor[rscolor_ind][1]
+    # frame_rscolor = rscolor[rscolor_ind][1]
 
-    frame_rscolor = cv2.rotate(frame_rscolor, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    # frame_rscolor = cv2.rotate(frame_rscolor, cv2.ROTATE_90_COUNTERCLOCKWISE)
     frame_arecont = cv2.rotate(frame_arecont, cv2.ROTATE_90_CLOCKWISE)
 
     result_arecont = model.track(frame_arecont, persist=True, conf=0.2, iou=0.5)
@@ -118,8 +118,8 @@ for s in range(len(fusedtime)):
         # Na snimku nebyl detekovan zadny strom - vychozi interval orezu
         frame_arecont = frame_arecont[:, default_crop_arecont[1][0]
                                          :default_crop_arecont[1][1]]
-        frame_rscolor = frame_rscolor[:, default_crop_rscolor[1][0]
-                                         :default_crop_rscolor[1][1]]
+        # frame_rscolor = frame_rscolor[:, default_crop_rscolor[1][0]
+        #                                  :default_crop_rscolor[1][1]]
     else:
         # Kontrola detekovanych boxu
         for m in range(len(boxes)):
@@ -133,16 +133,16 @@ for s in range(len(fusedtime)):
             # Byl nalezen strom blizko stredu - prizpusobeni intervalu orezu
             frame_arecont = frame_arecont[:, int(xbox) - halfcrop_arecont + 1
                                              :int(xbox) + halfcrop_arecont]
-            frame_rscolor = frame_rscolor[:, int(a2rs(xbox, w_rscolor, w_arecont)) -
-                                             halfcrop_rscolor + correction + 1:
-                                             int(a2rs(xbox, w_rscolor, w_arecont)) +
-                                             halfcrop_rscolor - correction]
+            # frame_rscolor = frame_rscolor[:, int(a2rs(xbox, w_rscolor, w_arecont)) -
+            #                                  halfcrop_rscolor + correction + 1:
+            #                                  int(a2rs(xbox, w_rscolor, w_arecont)) +
+            #                                  halfcrop_rscolor - correction]
         else:
             # Nebyl detekovan strom blizko stredu - vychozi interval orezu
             frame_arecont = frame_arecont[:, default_crop_arecont[1][0]
                                              :default_crop_arecont[1][1]]
-            frame_rscolor = frame_rscolor[:, default_crop_rscolor[1][0]
-                                             :default_crop_rscolor[1][1]]
+            # frame_rscolor = frame_rscolor[:, default_crop_rscolor[1][0]
+            #                                  :default_crop_rscolor[1][1]]
 
     annotated_frame_arecont = result_arecont[0].plot()
     cv2.imshow("Tracking Arecont", annotated_frame_arecont)
@@ -171,9 +171,17 @@ for s in range(len(fusedtime)):
 
     gps_position = [gpsmove_y.longitude, gpsmove_y.latitude]
     # [nazev stromu, gps, arecont snimek, realsense snimek, xy pozice, cas mereni]
-    tree = [str(nazevstromu), gps_position, frame_arecont, frame_rscolor, fused_position[s], fusedtime[s]]
+    tree = [str(nazevstromu), gps_position, frame_arecont, fused_position[s], fusedtime[s]]
     tree_list.append(tree)
 
+print(len(tree_list))
+
 joblib.dump(tree_list, 'data_memory/tree_list_'+(str(res1)+'_'+str(res2)+'.sav'))
+
+# I want to save the tree list frames as an images
+for i in range(len(tree_list)):
+    cv2.imwrite('data_memory/photos/arecont/' + tree_list[i][0] + '.jpg', tree_list[i][2])
+    #cv2.imwrite('data_memory/photos/rscolor/' + tree_list[i][0] + '.jpg', tree_list[i][3])
+    print('Saved image ' + tree_list[i][0] + '.jpg')
 
 
