@@ -24,15 +24,47 @@ sloupy_gps=[[15.569373884238743, 50.37002728347285],
             [15.56975212092143, 50.37108018176467],
             [15.569780411306475, 50.37116000418904]]
 
-start_gps = [gps_data[0][1][0], gps_data[0][1][1]]
-num_poles = 3
 
-#Funkce pro prevod gps na xy
+
+start_gps = [gps_data[0][1][0], gps_data[0][1][1]]
+
+gps_coords = [item[1] for item in gps_data]
+
+plt.figure(figsize=(6, 6))
+plt.title("GPS data")
+plt.xlabel("GPS x")
+plt.ylabel("GPS y")
+plt.scatter(*zip(*gps_coords), s=10, c='b', marker='o', label='GPS data')
+# add slpupy_gps to scatter plot start with sevth element
+plt.scatter(*zip(*sloupy_gps[:]), s=10, c='m', marker='o', label='Sloupy')
+plt.legend(loc='upper left',fontsize='large')
+
+num_poles = 4
+# sloupy_gps = sloupy_gps[6:14]
+sloupy_gps = sloupy_gps[6:14]
+# #Funkce pro prevod gps na xy
+# def gps2xy(sloupgps, startgps):
+#     sloupx, sloupy = sloupgps
+#     startx, starty = startgps
+#     coords = [distance([starty, startx], [starty, sloupx]).m * 1000,
+#               distance([starty, startx], [sloupy, startx]).m * 1000]
+
+#     return coords
+
+# Corrected gps2xy function
 def gps2xy(sloupgps, startgps):
     sloupx, sloupy = sloupgps
     startx, starty = startgps
-    coords = [distance([starty, startx], [starty, sloupx]).m * 1000,
-              distance([starty, startx], [sloupy, startx]).m * 1000]
+    # Calculate distances and multiply by 1000 to convert to meters
+    x_distance = distance([starty, startx], [starty, sloupx]).m * 1000
+    y_distance = distance([starty, startx], [sloupy, startx]).m * 1000
+    
+    # Determine the sign based on the comparison of coordinates
+    x_sign = 1 if sloupx > startx else -1
+    y_sign = 1 if sloupy > starty else -1
+    
+    # Apply the sign to the distances
+    coords = [x_distance * x_sign, y_distance * y_sign]
 
     return coords
 
@@ -56,10 +88,16 @@ def generate_trees(point_1, point_2, num_trees):
 
 stromy=[]
 sloupy_xy=[]
+gps_measured_xy = []
 #Převod GPS na xy a generování stromů
+for i in range(len(gps_coords)):
+    gps_measured_xy.append(gps2xy(gps_coords[i], start_gps))
+
 for h in range(num_poles):
     sloup_conv = gps2xy(sloupy_gps[h], start_gps)
     sloupy_xy.append(sloup_conv)
+
+    
     if h == 13:
         strom = generate_trees(sloupy_xy[h-1],sloupy_xy[h],18)
         stromy = stromy + strom
@@ -77,9 +115,36 @@ plt.xlabel("x [mm]")
 plt.ylabel("y [mm]")
 plt.scatter(treesx, treesy, s=10, c='k', marker='o', label='Stromy')
 plt.scatter(polesx, polesy, s=10, c='m', marker='o', label='Sloupy')
+plt.scatter(*zip(*gps_measured_xy), s=10, c='b', marker='o', label='GPS data')
 plt.legend(loc='upper left',fontsize='large')
 
 plt.show()
+# import numpy as np
+# print(np.size(sloupy_gps))
+
+# sloup_x = np.array(sloupy_gps)[:,0]
+# sloup_y = np.array(sloupy_gps[:,1])
+
+# import numpy as np
+
+# # Convert sloupy_gps to a numpy array
+# sloupy_gps_array = np.array(sloupy_gps)
+
+# # Access the first column (all x coordinates)
+# first_column = sloupy_gps_array[:, 0]
+
+# # Access the second column (all y coordinates)
+# second_column = sloupy_gps_array[:, 1]
+
+# plt.figure(figsize=(6, 6))
+# plt.title("Apriorní mapa")
+# plt.xlabel("GPS x")
+# plt.ylabel("GPS y")
+
+# plt.scatter(first_column, second_column, s=10, c='m', marker='o', label='Sloupy')
+# # plt.legend(loc='upper left',fontsize='large')
+
+# plt.show()
 
 #Uložení
 joblib.dump(stromy, 'data_memory/amap_trees_'+str(res1)+'_'+str(res2)+'.sav')
