@@ -107,7 +107,7 @@ for s in range(len(fusedtime)):
     # frame_rscolor = rscolor[rscolor_ind][1]
 
     # frame_rscolor = cv2.rotate(frame_rscolor, cv2.ROTATE_90_COUNTERCLOCKWISE)
-    frame_arecont = cv2.rotate(frame_arecont, cv2.ROTATE_90_CLOCKWISE)
+    frame_arecont = cv2.rotate(frame_arecont, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
     result_arecont = model.track(frame_arecont, persist=True, conf=0.2, iou=0.5)
     boxes = result_arecont[0].boxes.xyxy
