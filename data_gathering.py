@@ -5,22 +5,27 @@ from osgar.logger import LogReader, lookup_stream_id
 import pandas as pd
 import math
 import joblib
+import yaml
+
+# Load YAML configuration
+with open('config.yaml', 'r') as config_file:
+    config = yaml.safe_load(config_file)
 
 #Načtení cesty k logu
-log_file = 'data_memory\ipc-dynamic-meas-240419_210554.log'
+log_file = config["log_file_path"]
 
-print(log_file)
+# print(log_file)
 
 #Definice názvů jednotlivých kanálů pro čtení.
 #POZOR - data z roku 2022 a 2023 mají jiné názvy, zkontrolovat pomocí python3 -m osgar.logger logfile.log
-sname_gps_position = "from_spider.position"
+sname_gps_position = config["stream_names"]['gps_position']
 # sname_realsense_color = "realsense.color"
 # sname_realsense_depth = "realsense.depth"
-sname_lidar_scan = "from_spider.lidar_scan"
-sname_from_spider_pose3d = "from_spider.pose3d"
-sname_from_spider_pose2d = "from_spider.pose2d"
-sname_arecontcam = "arecont.image"
-# sname_arecontcam = "route_cam.image"
+sname_lidar_scan = config["stream_names"]['lidar_scan']
+sname_from_spider_pose3d = config["stream_names"]['pose3d']
+sname_from_spider_pose2d = config["stream_names"]['pose2d']
+sname_arecontcam = config["stream_names"]['arecontcam']
+sname_arecontcam = "route_cam.image"
 
 ostream_gps_position = lookup_stream_id(log_file, sname_gps_position)
 # ostream_realsense_color = lookup_stream_id(log_file, sname_realsense_color)

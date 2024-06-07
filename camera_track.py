@@ -40,7 +40,8 @@ distortion_limit = 200
 centlowlim = -150
 centhighlim = 150
 
-arecont_res = [1024, 768]
+# arecont_res = [1024, 768]
+arecont_res = [1920, 1080]
 sensor_placement = [250, 1200]
 ident_limit = 200
 
@@ -95,6 +96,11 @@ for n in range(len(rscolor_t)):
 
 S = 4.8 #sirka senzoru
 f = 1.2 #ohniskova vzdalenost
+
+f = 2.8  # route cam
+S = 4.04  # route cam
+
+
 fov = math.atan(S/2*f)
 
 all_trees = []

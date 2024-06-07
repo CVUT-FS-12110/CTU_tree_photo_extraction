@@ -1,0 +1,7 @@
+log_file_path: data_memory/ipc-dynamic-meas-240419_210554.log
+stream_names:
+  gps_position: from_spider.position
+  lidar_scan: from_spider.lidar_scan
+  pose3d: from_spider.pose3d
+  pose2d: from_spider.pose2d
+  arecontcam: arecont.image
